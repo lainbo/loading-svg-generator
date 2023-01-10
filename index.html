@@ -6,13 +6,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading SVG生成器</title>
+
   <style>
+    pre {
+      margin: 0;
+    }
+
     .spinner {
       --spinner-size: 5;
-      --line-color: #0ebeff;
+      --line-color: #5b61ff;
       --line-alpha: 1;
       --ring-color: #000000;
-      --ring-alpha: .3;
+      --ring-alpha: 0.15;
       --ring-size: 10;
 
       font-size: calc(var(--spinner-size) * 1em);
@@ -59,9 +64,6 @@
       }
     }
 
-    /* spinner motion based on https://codepen.io/supah/pen/BjYLdW */
-
-    /* irrelevant to spinner */
     body {
       height: 100vh;
       margin: 0;
@@ -105,17 +107,12 @@
       flex-direction: column;
       background: rgba(128, 128, 128, .15);
       border-right: 2px solid rgba(128, 128, 128, .5);
-      max-width: 0;
+      max-width: 65vw;
       overflow: hidden;
+      overflow: auto;
       padding: 2em;
-      transition: max-width 450ms ease-out 100ms;
     }
 
-    .code:hover {
-      padding: 2em;
-      max-width: 65vw;
-      overflow: auto;
-    }
 
     input[type="checkbox"] {
       margin: 0;
@@ -127,48 +124,56 @@
 
 <body class="light">
   <div class="code">
-    <pre><code lang="html">&lt;svg viewBox="0 0 50 50" class="spinner">
-    &lt;circle class="ring" cx="25" cy="25" r="22.5" />
-    &lt;circle class="line" cx="25" cy="25" r="22.5" />
-  &lt;/svg></code></pre>
+    <pre>
+      <code lang="html">
+&lt;svg viewBox="0 0 50 50" class="spinner">
+  &lt;circle class="ring" cx="25" cy="25" r="22.5" />
+  &lt;circle class="line" cx="25" cy="25" r="22.5" />
+&lt;/svg></code>
+  </pre>
     <pre><code lang="css">.spinner {
-    --spinner-size: <span class="spinner-size">5</span>;
-    --line-color: <span class="line-color">#0ebeff</span>;
-    --line-alpha: <span class="line-alpha">1</span>;
-    --ring-color: <span class="ring-color">#000000</span>;
-    --ring-alpha: <span class="ring-alpha">.3</span>;
-    --ring-size: <span class="ring-size">10</span>;
-  
-    font-size: calc(var(--spinner-size) * 1em);
-    width: 1em;
-    height: 1em;
-    border-radius: 50%;
-  }
-  .spinner .line {
-    fill: none;
-    stroke: var(--line-color);
-    stroke-width: var(--ring-size);
-    opacity: var(--line-alpha);
-    stroke-linecap: round;
-    transform-origin: 50% 50%;
-    transform: rotate3d(0, 0, 1, 0deg);
-    animation: 
-      2156ms spinner-arc ease-in-out infinite,
-      1829ms spinner-rotate linear infinite;
-  }
-  .spinner .ring {
-    fill: none;
-    stroke: var(--ring-color);
-    stroke-width: var(--ring-size);
-    opacity: var(--ring-alpha);
-  }
-  @keyframes spinner-rotate {
-    to { transform: rotate3d(0, 0, 1, 360deg); }
-  }
-  @keyframes spinner-arc {
-    from { stroke-dasharray: 0 150; stroke-dashoffset: 0; }
-    to { stroke-dasharray: 100 150; stroke-dashoffset: -140; }
-  }</code></pre>
+  --spinner-size: <span class="spinner-size">5</span>;
+  --line-color: <span class="line-color">#5b61ff</span>;
+  --line-alpha: <span class="line-alpha">1</span>;
+  --ring-color: <span class="ring-color">#000000</span>;
+  --ring-alpha: <span class="ring-alpha">.15</span>;
+  --ring-size: <span class="ring-size">10</span>;
+
+  font-size: calc(var(--spinner-size) * 1em);
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+}
+
+.spinner .line {
+  fill: none;
+  stroke: var(--line-color);
+  stroke-width: var(--ring-size);
+  opacity: var(--line-alpha);
+  stroke-linecap: round;
+  transform-origin: 50% 50%;
+  transform: rotate3d(0, 0, 1, 0deg);
+  animation: 
+    2156ms spinner-arc ease-in-out infinite,
+    1829ms spinner-rotate linear infinite;
+}
+
+.spinner .ring {
+  fill: none;
+  stroke: var(--ring-color);
+  stroke-width: var(--ring-size);
+  opacity: var(--ring-alpha);
+}
+
+@keyframes spinner-rotate {
+  to { transform: rotate3d(0, 0, 1, 360deg); }
+}
+
+@keyframes spinner-arc {
+  from { stroke-dasharray: 0 150; stroke-dashoffset: 0; }
+  to { stroke-dasharray: 100 150; stroke-dashoffset: -140; }
+}
+</code></pre>
   </div>
 
   <div class="preview">
@@ -203,8 +208,8 @@
     </div>
     <div>
       <div>
-        <input type="color" value="#0ebeff" oninput="setProperty('.line-color', '--line-color', this.value)" /><br />
-        <small>内容颜色: <span class="line-color">#0ebeff</span></small>
+        <input type="color" value="#5b61ff" oninput="setProperty('.line-color', '--line-color', this.value)" /><br />
+        <small>内容颜色: <span class="line-color">#5b61ff</span></small>
       </div>
       <br />
       <div>
@@ -223,12 +228,12 @@
       </div>
       <br />
       <div>
-        <input type="range" list="ring-alpha" value=".3" min="0" max="1" step=".01"
+        <input type="range" list="ring-alpha" value=".15" min="0" max="1" step=".01"
           oninput="setProperty('.ring-alpha', '--ring-alpha', this.value)" /><br />
-        <small>圆环透明度: <span class="ring-alpha">.3</span></small>
+        <small>圆环透明度: <span class="ring-alpha">.15</span></small>
         <datalist id="ring-alpha">
           <option>.05</option>
-          <option>.3</option>
+          <option>.15</option>
         </datalist>
       </div>
     </div>
