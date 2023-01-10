@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading SVG生成器</title>
+  <style>
+    .spinner {
+      --spinner-size: 5;
+      --line-color: #0ebeff;
+      --line-alpha: 1;
+      --ring-color: #000000;
+      --ring-alpha: .3;
+      --ring-size: 10;
+
+      font-size: calc(var(--spinner-size) * 1em);
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+    }
+
+    .spinner .line {
+      fill: none;
+      stroke: var(--line-color);
+      stroke-width: var(--ring-size);
+      opacity: var(--line-alpha);
+      stroke-linecap: round;
+      transform-origin: 50% 50%;
+      transform: rotate3d(0, 0, 1, 0deg);
+      animation:
+        2156ms spinner-arc ease-in-out infinite,
+        1829ms spinner-rotate linear infinite;
+    }
+
+    .spinner .ring {
+      fill: none;
+      stroke: var(--ring-color);
+      stroke-width: var(--ring-size);
+      opacity: var(--ring-alpha);
+    }
+
+    @keyframes spinner-rotate {
+      to {
+        transform: rotate3d(0, 0, 1, 360deg);
+      }
+    }
+
+    @keyframes spinner-arc {
+      from {
+        stroke-dasharray: 0 150;
+        stroke-dashoffset: 0;
+      }
+
+      to {
+        stroke-dasharray: 100 150;
+        stroke-dashoffset: -140;
+      }
+    }
+
+    /* spinner motion based on https://codepen.io/supah/pen/BjYLdW */
+
+    /* irrelevant to spinner */
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+      font-family: sans-serif;
+      transition: 450ms ease-out;
+      color: #fff;
+      background: #212325;
+    }
+
+    body.light {
+      color: #333;
+      background: #fff;
+    }
+
+    .preview {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .controls {
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-around;
+      text-align: center;
+      background: rgba(128, 128, 128, .15);
+      border-left: 2px solid rgba(128, 128, 128, .5);
+      padding: 2em;
+    }
+
+    .code {
+      flex: 1;
+      position: relative;
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      background: rgba(128, 128, 128, .15);
+      border-right: 2px solid rgba(128, 128, 128, .5);
+      max-width: 0;
+      overflow: hidden;
+      padding: 2em;
+      transition: max-width 450ms ease-out 100ms;
+    }
+
+    .code:hover {
+      padding: 2em;
+      max-width: 65vw;
+      overflow: auto;
+    }
+
+    input[type="checkbox"] {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+  </style>
+</head>
+
+<body class="light">
+  <div class="code">
+    <pre><code lang="html">&lt;svg viewBox="0 0 50 50" class="spinner">
+    &lt;circle class="ring" cx="25" cy="25" r="22.5" />
+    &lt;circle class="line" cx="25" cy="25" r="22.5" />
+  &lt;/svg></code></pre>
+    <pre><code lang="css">.spinner {
+    --spinner-size: <span class="spinner-size">5</span>;
+    --line-color: <span class="line-color">#0ebeff</span>;
+    --line-alpha: <span class="line-alpha">1</span>;
+    --ring-color: <span class="ring-color">#000000</span>;
+    --ring-alpha: <span class="ring-alpha">.3</span>;
+    --ring-size: <span class="ring-size">10</span>;
+  
+    font-size: calc(var(--spinner-size) * 1em);
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+  }
+  .spinner .line {
+    fill: none;
+    stroke: var(--line-color);
+    stroke-width: var(--ring-size);
+    opacity: var(--line-alpha);
+    stroke-linecap: round;
+    transform-origin: 50% 50%;
+    transform: rotate3d(0, 0, 1, 0deg);
+    animation: 
+      2156ms spinner-arc ease-in-out infinite,
+      1829ms spinner-rotate linear infinite;
+  }
+  .spinner .ring {
+    fill: none;
+    stroke: var(--ring-color);
+    stroke-width: var(--ring-size);
+    opacity: var(--ring-alpha);
+  }
+  @keyframes spinner-rotate {
+    to { transform: rotate3d(0, 0, 1, 360deg); }
+  }
+  @keyframes spinner-arc {
+    from { stroke-dasharray: 0 150; stroke-dashoffset: 0; }
+    to { stroke-dasharray: 100 150; stroke-dashoffset: -140; }
+  }</code></pre>
+  </div>
+
+  <div class="preview">
+    <svg viewBox="0 0 50 50" class="spinner">
+      <circle class="ring" cx="25" cy="25" r="22.5" />
+      <circle class="line" cx="25" cy="25" r="22.5" />
+    </svg>
+  </div>
+
+  <div class="controls">
+    <div>
+      <label><input type="checkbox" onchange="toggleDarkness()" /> <small>切换到深色</small></label>
+    </div>
+    <div>
+      <div>
+        <input type="range" list="spinner" value="5" min="1" max="35" step="1"
+          oninput="setProperty('.spinner-size', '--spinner-size', this.value)" /><br />
+        <small>Loading尺寸: <span class="spinner-size">5</span>em</small>
+        <datalist id="spinner">
+          <option>5</option>
+        </datalist>
+      </div>
+      <br />
+      <div>
+        <input type="range" list="ring" value="10" min="1" max="100" step="1"
+          oninput="setProperty('.ring-size', '--ring-size', this.value)" /><br />
+        <small>圆环粗细: <span class="ring-size">10</span></small>
+        <datalist id="ring">
+          <option>10</option>
+        </datalist>
+      </div>
+    </div>
+    <div>
+      <div>
+        <input type="color" value="#0ebeff" oninput="setProperty('.line-color', '--line-color', this.value)" /><br />
+        <small>内容颜色: <span class="line-color">#0ebeff</span></small>
+      </div>
+      <br />
+      <div>
+        <input type="range" list="line-alpha" value="1" min="0" max="1" step=".01"
+          oninput="setProperty('.line-alpha', '--line-alpha', this.value)" /><br />
+        <small>内容透明度: <span class="line-alpha">1</span></small>
+        <datalist id="line-alpha">
+          <option>1</option>
+        </datalist>
+      </div>
+    </div>
+    <div>
+      <div>
+        <input type="color" value="#000000" oninput="setProperty('.ring-color', '--ring-color', this.value)" /><br />
+        <small>圆环颜色: <span class="ring-color">#000000</span></small>
+      </div>
+      <br />
+      <div>
+        <input type="range" list="ring-alpha" value=".3" min="0" max="1" step=".01"
+          oninput="setProperty('.ring-alpha', '--ring-alpha', this.value)" /><br />
+        <small>圆环透明度: <span class="ring-alpha">.3</span></small>
+        <datalist id="ring-alpha">
+          <option>.05</option>
+          <option>.3</option>
+        </datalist>
+      </div>
+    </div>
+  </div>
+  <script>
+    // control helpers
+    const loader = document.querySelector('svg.spinner')
+    const body = document.querySelector('body')
+    let setProperty = (selector, property, value) => {
+      loader.style.setProperty(property, value)
+      let elements = document.querySelectorAll(selector)
+      elements.forEach(element => element.innerHTML = value)
+    }
+
+    let toggleDarkness = () => body.classList.toggle('light')
+
+  </script>
+</body>
+
+</html>
